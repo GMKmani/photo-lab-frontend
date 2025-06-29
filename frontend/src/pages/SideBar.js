@@ -4,7 +4,6 @@ import {
   LayoutDashboard,
   FilePlus2,
   ListOrdered,
-  BarChart4,
   X,
   Info,
 } from "lucide-react";

@@ -25,7 +25,7 @@ const Dashboard = () => {
     }).then(res => {
       setSummary(res.data);
     }).catch(err => console.error(err));
-  }, []);
+  }, [userId, token]);
 
   useEffect(() => {
     const fetchFilteredData = async () => {
