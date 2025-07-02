@@ -183,7 +183,7 @@ const AddOrder = () => {
     placeholder="Enter address"
     value={form.address}
     onChange={handleChange}
-    required
+   
     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900"
   ></input>
 </div>
@@ -199,7 +199,7 @@ const AddOrder = () => {
     placeholder="Enter city"
     value={form.city}
     onChange={handleChange}
-    required
+   
     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900"
   />
 </div>

@@ -95,6 +95,7 @@ const Dashboard = () => {
           Total Income: ₹{summary.totalIncome}
         </div>
       </div>
+      
       <div style={{
   display: "flex",
   flexWrap: "wrap", 
@@ -103,49 +104,62 @@ const Dashboard = () => {
   margin: "auto",
   justifyContent: "center", 
 }}>
-  <div className="mt-6" style={{
-    width: "100%", 
-    maxWidth: "400px", 
-    height: "400px",
-    flex: "1 1 300px", 
-  }}>
-    <h2 className="text-xl font-bold mb-5">Orders Breakdown</h2>
-    <div className="bg-gray-800 p-6 rounded shadow">
-      <Pie data={pieData} />
-    </div>
-  </div>
-
-  <div className="mt-6" style={{
-    width: "100%", 
-    maxWidth: "400px", 
-    height: "400px",
-    flex: "1 1 300px",
-  }}>
-    <div style={{
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center", 
-    }}>
-      <h2 className="text-xl font-bold mb-4">Filtered Orders Breakdown</h2>
-      <div className="mb-4">
-        <label htmlFor="filter" className="text-white mr-2">Filter:</label>
-        <select
-          id="filter"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="p-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900"
-        >
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-        </select>
+  {summary.totalOrders > 0 || (filteredChartData && filteredChartData.datasets[0].data.some((value) => value > 0)) ? (
+    <>
+      <div className="mt-6" style={{
+        width: "100%", 
+        maxWidth: "400px", 
+        height: "400px",
+        flex: "1 1 300px", 
+      }}>
+        <h2 className="text-xl font-bold mb-5">Orders Breakdown</h2>
+        <div className="bg-gray-800 p-6 rounded shadow">
+          <Pie data={pieData} />
+        </div>
       </div>
+
+      <div className="mt-6" style={{
+        width: "100%", 
+        maxWidth: "400px", 
+        height: "400px",
+        flex: "1 1 300px",
+      }}>
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center", 
+        }}>
+          <h2 className="text-xl font-bold mb-4">Filtered Orders Breakdown</h2>
+          <div className="mb-4">
+            <label htmlFor="filter" className="text-white mr-2">Filter:</label>
+            <select
+              id="filter"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="p-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-900"
+            >
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </div>
+        </div>
+        <div className="bg-gray-800 p-6 rounded shadow">
+          <Pie data={filteredChartData} />
+        </div>
+      </div>
+    </>
+  ) : (
+    <div style={{display: "flex",
+      alignContent: "center",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "418px"}}>
+
+    <p className="text-white text-center">No data available</p>
     </div>
-    <div className="bg-gray-800 p-6 rounded shadow">
-      <Pie data={filteredChartData} />
-    </div>
-  </div>
+  )}
 </div>
     </div>
   );

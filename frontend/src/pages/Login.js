@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
-import loginImage from '../assets/imageForLogin.png'; // Update the path to your image
+import loginImage from '../assets/imageForLogin.png';
+import spinner from '../assets/Photo Camera.svg'; // Import spinner image
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSignUp, setIsSignUp] = useState(false); // State to toggle between login and sign-up forms
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [signUpForm, setSignUpForm] = useState({
     name: '',
     email: '',
@@ -18,6 +20,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLoginSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
     try {
       const res = await axios.post('https://photo-lab.onrender.com/api/auth/login', { email, password });
@@ -25,26 +28,46 @@ const Login = () => {
       localStorage.setItem('userId', res.data.userId);
       sessionStorage.setItem('userName', res.data.name);
       console.log(res);
-      alert('Login successful');
+      setLoading(false);
       navigate('/Dashboard');
     } catch (err) {
+      setLoading(false);
       alert('Login Failed.. Invalid Credentials.. please try again');
     }
   };
 
   const handleSignUpSubmit = async (e) => {
+    setLoading(true)
     e.preventDefault();
     try {
-      await axios.post('https://photo-lab.onrender.com/api/auth/signup', signUpForm);
-      alert('Sign Up successful!');
+     const res = await axios.post('https://photo-lab.onrender.com/api/auth/signup', signUpForm);
+      console.log(res.response);
+      if(res.response.status === 200) {
+        setLoading(false)
+        alert('Sign Up Successful! Please log in.');
+      }
+      else if(res.response.status === 400)  // Assuming 400 is returned for bad requests
+      {
+        setLoading(false)
+        alert("User already exists. Please log in.");
+      }
+      setLoading(false)
       setIsSignUp(false); // Switch back to login form after successful sign-up
     } catch (err) {
       console.error(err);
-      alert('Sign Up failed. Please try again.');
+      if (err.response && err.response.status === 400) {
+        alert('User already exists. Please log in.');
+      }
+      else
+      {
+        alert('Sign Up Failed. Please try again.');
+      }
+      setLoading(false)
     }
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
     try {
       const res = await axios.post('https://photo-lab.onrender.com/api/auth/google-login', {
         tokenId: credentialResponse.credential,
@@ -52,9 +75,10 @@ const Login = () => {
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userId', res.data.userId);
       sessionStorage.setItem('userName', res.data.name);
-      alert('Google Login successful');
+      setLoading(false);
       navigate('/Dashboard');
     } catch (err) {
+      setLoading(false);
       alert('Google Login failed');
     }
   };
@@ -66,11 +90,8 @@ const Login = () => {
 
   return (
       <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          height: '100vh',
-        }}
+       className="flex flex-col md:flex-row h-screen"
+        
       >
         {/* Left Half: Image */}
         <div
@@ -358,6 +379,15 @@ const Login = () => {
             </div>
           </div>
         </div>
+        {loading && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            {/* Modal Content */}
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <img src={spinner} alt="Loading..." className="w-16 h-16 object-cover mx-auto" />
+              <p className="text-center mt-4 text-gray-700">Loading, please wait...</p>
+            </div>
+          </div>
+        )}
       </div>
 
   );
